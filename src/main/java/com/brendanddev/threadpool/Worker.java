@@ -11,8 +11,11 @@ import com.brendanddev.threadpool.CustomRunnable;
  */
 public class Worker implements Runnable {
 
+    public enum State { IDLE, BUSY }
+
     private final BlockingQueue taskQueue;
     private volatile boolean isStopped = false;
+    private volatile State state = State.IDLE;
 
     /**
      * Constructs a Worker instance with the given task queue.
@@ -31,8 +34,10 @@ public class Worker implements Runnable {
     public void run() {
         while (!isStopped) {
             try {
+                state = State.IDLE;
                 // Take task from queue and execute it
                 CustomRunnable task = taskQueue.take();
+                state = State.BUSY;
                 task.run();
             } catch (InterruptedException e) {
                 // Restore interrupted status and exit gracefully if interrupted
