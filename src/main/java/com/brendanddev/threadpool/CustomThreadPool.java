@@ -58,13 +58,30 @@ public class CustomThreadPool {
     public void shutdown() { 
         isShutdown = true;
 
-        for (Worker worker : workers) {
-            worker.stopWorker();
+        for (Worker worker : workers) worker.stopWorker();
+        for (Thread t : workerThreads) t.interrupt();
+    }
+
+    /**
+     * Immediately shuts down the thread pool.
+     * Worker threads stop as soon as possible, and remaining tasks in the queue are discarded.
+     */
+    public void shutdownNow() {
+        isShutdown = true;
+
+        for (Worker worker : workers) worker.stopWorker();
+
+        synchronized (taskQueue) {
+            while (taskQueue.size() > 0) {
+                try {
+                    taskQueue.take();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
         }
 
-        for (Thread t : workerThreads) {
-            t.interrupt();
-        }
+        for (Thread t : workerThreads) t.interrupt();
     }
 
     
