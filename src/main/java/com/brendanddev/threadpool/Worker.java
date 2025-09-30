@@ -41,7 +41,12 @@ public class Worker implements Runnable {
         }
     }
 
-
-    public void stopWorker() { }
+    /**
+     * Stops this worker gracefully.
+     * The current task, if any, will finish before stopping.
+     */
+    public void stopWorker() {
+        isStopped = true;
+    }
     
 }
