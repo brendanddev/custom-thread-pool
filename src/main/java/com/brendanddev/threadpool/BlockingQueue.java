@@ -53,5 +53,11 @@ public class BlockingQueue {
         return task;
     }
 
+    /**
+     * Returns the current number of tasks in the queue.
+     */
+    public synchronized int size() {
+        return queue.size();
+    }
     
 }
