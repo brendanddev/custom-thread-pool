@@ -84,5 +84,12 @@ public class CustomThreadPool {
         for (Thread t : workerThreads) t.interrupt();
     }
 
+    /**
+     * Returns the number of tasks waiting in the pool's task queue.
+     */
+    public int getQueueSize() {
+        return taskQueue.size();
+    }
+
     
 }
