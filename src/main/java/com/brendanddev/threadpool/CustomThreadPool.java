@@ -51,8 +51,21 @@ public class CustomThreadPool {
         taskQueue.put(task);
     }
 
+    /**
+     * Shuts down the thread pool gracefully.
+     * Current tasks will finish, and worker threads will stop afterwards.
+     */
+    public void shutdown() { 
+        isShutdown = true;
 
-    public void shutdown() { }
+        for (Worker worker : workers) {
+            worker.stopWorker();
+        }
+
+        for (Thread t : workerThreads) {
+            t.interrupt();
+        }
+    }
 
     
 }
