@@ -1,6 +1,7 @@
 package com.brendanddev.threadpool;
 
 import com.brendanddev.threadpool.BlockingQueue;
+import com.brendanddev.threadpool.CustomRunnable;
 import com.brendanddev.threadpool.Worker;
 
 /**
@@ -36,8 +37,22 @@ public class CustomThreadPool {
         }
     }
 
-    public void execute() { }
+    /**
+     * Submits a task to the thread pool, blocking if the task queue is full.
+     * 
+     * @param task The CustomRunnable task to execute.
+     * @throws InterruptedException If the thread is interrupted while waiting to add the task.
+     * @throws IllegalStateException If the pool has been shut down.
+     */
+    public void execute(CustomRunnable task) throws InterruptedException {
+        if (isShutdown) {
+            throw new IllegalStateException("Thread pool is shutdown, cannot accept new tasks");
+        }
+        taskQueue.put(task);
+    }
+
+
     public void shutdown() { }
-    
+
     
 }
