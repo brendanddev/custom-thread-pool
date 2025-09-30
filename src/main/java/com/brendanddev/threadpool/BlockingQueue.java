@@ -37,4 +37,21 @@ public class BlockingQueue {
         notifyAll();
     }
     
+    /**
+     * Removes and returns a task from the queue.
+     * If the queue is empty, the calling thread will wait until a task becomes available.
+     * 
+     * @return The next task from the queue.
+     * @throws InterruptedException If the thread is interrupted while waiting.
+     */
+    public synchronized CustomRunnable take() throws InterruptedException {
+        while (queue.isEmpty()) {
+            wait();
+        }
+        CustomRunnable task = queue.remove(0);
+        notifyAll();
+        return task;
+    }
+
+    
 }
