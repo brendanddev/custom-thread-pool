@@ -91,5 +91,20 @@ public class CustomThreadPool {
         return taskQueue.size();
     }
 
+    public int getNumOfThreads() {
+        return numOfThreads;
+    }
+
+    public Thread getWorkerThread(int index) {
+        if (index < 0 || index >= workerThreads.length) {
+            throw new IllegalArgumentException("Invalid worker index: " + index);
+        }
+        return workerThreads[index];
+    }
+
+    public boolean isShutdown() {
+        return isShutdown;
+    }
+
     
 }
