@@ -1,5 +1,7 @@
 package com.brendanddev.threadpool;
 
+import java.util.Random;
+
 import com.brendanddev.threadpool.CustomThreadPool;
 
 public class Main {
@@ -7,28 +9,42 @@ public class Main {
     public static void main(String[] args) throws InterruptedException {
 
         CustomThreadPool pool = new CustomThreadPool(3, 5);
+        Random random = new Random();
 
-        for (int i = 0; i <= 10; i++) {
+        Thread monitor = new Thread(() -> {
+            while (true) {
+                StringBuilder status = new StringBuilder("Pool status: Queue=" + pool.getQueueSize() + " | ");
+                for (int i = 0; i < pool.getNumOfThreads(); i++) {
+                    Worker w = pool.getWorker(i);
+                    status.append("Worker-").append(i).append("=").append(w.getState()).append(" | ");
+                }
+                System.out.println(status);
+                try { Thread.sleep(500); } catch (InterruptedException e) { break; }
+            }
+        });
+
+        monitor.setDaemon(true);
+        monitor.start();
+
+        for (int i = 0; i < 15; i++) {
             int taskId = i;
             pool.execute(() -> {
-                System.out.println(Thread.currentThread().getName() + " executing task " + taskId);
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
+                System.out.println(Thread.currentThread().getName() + " started task " + taskId);
+                try { Thread.sleep(500 + random.nextInt(1500)); } catch (InterruptedException e) {
                     System.out.println(Thread.currentThread().getName() + " interrupted!");
                     Thread.currentThread().interrupt();
                 }
+                System.out.println(Thread.currentThread().getName() + " finished task " + taskId);
             });
+            Thread.sleep(200);
         }
 
-        System.out.println("Tasks waiting in queue: " + pool.getQueueSize());
-        Thread.sleep(3000);
-
-        System.out.println("Shutting down gracefully...");
+        Thread.sleep(5000);
+        System.out.println("\nShutting down gracefully...");
         pool.shutdown();
-
         Thread.sleep(2000);
-        System.out.println("Shutting down immediately...");
+
+        System.out.println("\nShutting down immediately...");
         pool.shutdownNow();
         
     }
