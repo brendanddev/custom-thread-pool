@@ -1,0 +1,22 @@
+# Maven build
+/target/
+
+# IntelliJ IDEA
+*.iml
+.idea/
+out/
+
+# Eclipse
+*.classpath
+*.project
+*.settings/
+
+# VS Code
+.vscode/
+
+# MacOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
