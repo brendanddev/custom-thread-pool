@@ -7,7 +7,9 @@ import com.brendanddev.threadpool.CustomRunnable;
 
 /**
  * A thread-safe queue for storing tasks in a thread pool.
- * It blocks producers when the queue is full and blocks consumers when the queue is empty.
+ * 
+ * This class uses synchronized methods 'wait()' and 'notifyAll()' to ensure that producer 
+ * threads block when the queue is full and consumer threads block when the queue is empty.
  */
 public class BlockingQueue {
 
