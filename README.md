@@ -16,3 +16,14 @@ This project was built from scratch to better understand concurrency in Java wit
   - Task start/finish logs
 
 ---
+
+## Project Structure
+
+```
+src/main/java/com/brendanddev/threadpool/
+├── BlockingQueue.java # Simple blocking queue for tasks
+├── CustomRunnable.java # Wrapper for submitted tasks
+├── CustomThreadPool.java # Thread pool implementation
+├── Worker.java # Worker thread logic
+└── Main.java # Demo runner with monitoring
+```
