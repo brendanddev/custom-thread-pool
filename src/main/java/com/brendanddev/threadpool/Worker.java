@@ -1,6 +1,7 @@
 package com.brendanddev.threadpool;
 
 import com.brendanddev.threadpool.BlockingQueue;
+import com.brendanddev.threadpool.CustomRunnable;
 
 /**
  * This Worker class represents a single thread in the thread pool that continuously 
@@ -21,9 +22,26 @@ public class Worker implements Runnable {
     public Worker(BlockingQueue taskQueue) {
         this.taskQueue = taskQueue;
     }
-
+    
+    /**
+     * Continuously takes tasks from the queue and executes them.
+     * Blocks if the queue is empty, and stops when 'stopWorker()' is called.
+     */
     @Override
-    public void run() { }
+    public void run() {
+        while (!isStopped) {
+            try {
+                // Take task from queue and execute it
+                CustomRunnable task = taskQueue.take();
+                task.run();
+            } catch (InterruptedException e) {
+                // Restore interrupted status and exit gracefully if interrupted
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+
+
     public void stopWorker() { }
     
 }
