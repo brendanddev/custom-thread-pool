@@ -61,5 +61,17 @@ public class BlockingQueue {
     public synchronized int size() {
         return queue.size();
     }
+
+    
+    public synchronized boolean offer(CustomRunnable task) {
+        if (queue.size() >= capacity) {
+            return false;
+        }
+        queue.add(task);
+        notifyAll();
+        return true;
+    }
+
+
     
 }
