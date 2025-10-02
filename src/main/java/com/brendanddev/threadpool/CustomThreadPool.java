@@ -60,7 +60,10 @@ public class CustomThreadPool {
         if (isShutdown) {
             throw new IllegalStateException("Thread pool is shutdown, cannot accept new tasks");
         }
-        taskQueue.put(task);
+        boolean accepted = taskQueue.offer(task);
+        if (!accepted) {
+            rejectionPolicy.reject(task, this);
+        }
     }
 
     /**
