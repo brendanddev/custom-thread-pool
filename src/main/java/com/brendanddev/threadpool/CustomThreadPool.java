@@ -1,7 +1,9 @@
 package com.brendanddev.threadpool;
 
+import com.brendanddev.threadpool.AbortPolicy;
 import com.brendanddev.threadpool.BlockingQueue;
 import com.brendanddev.threadpool.CustomRunnable;
+import com.brendanddev.threadpool.RejectionPolicy;
 import com.brendanddev.threadpool.Worker;
 
 /**
@@ -16,6 +18,7 @@ public class CustomThreadPool {
     private final Thread[] workerThreads;
     private final BlockingQueue taskQueue;
     private volatile boolean isShutdown = false;
+    private final RejectionPolicy rejectionPolicy;
 
     /**
      * Constructs a new CustomThreadPool with a fixed number of worker threads and a specified
@@ -24,17 +27,26 @@ public class CustomThreadPool {
      * @param numOfThreads The number of worker threads in the pool.
      * @param queueCapacity The maximum number of tasks the queue can hold.
      */
-    public CustomThreadPool(int numOfThreads, int queueCapacity) {
+    public CustomThreadPool(int numOfThreads, int queueCapacity, RejectionPolicy rejectionPolicy) {
         this.numOfThreads = numOfThreads;
         this.taskQueue = new BlockingQueue(queueCapacity);
         this.workers = new Worker[numOfThreads];
         this.workerThreads = new Thread[numOfThreads];
+        this.rejectionPolicy = rejectionPolicy;
 
         for (int i = 0; i < numOfThreads; i++) {
             workers[i] = new Worker(taskQueue);
             workerThreads[i] = new Thread(workers[i], "Worker-" + i);
             workerThreads[i].start();
         }
+    }
+
+    /**
+     * Constructs a new CustomThreadPool with a fixed number of worker threads and a specified
+     * task queue capacity, using the default AbortPolicy for task rejection.
+     */
+    public CustomThreadPool(int numOfThreads, int queueCapacity) {
+        this(numOfThreads, queueCapacity, new AbortPolicy());
     }
 
     /**
