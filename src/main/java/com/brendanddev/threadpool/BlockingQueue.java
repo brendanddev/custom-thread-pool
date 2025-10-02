@@ -62,7 +62,12 @@ public class BlockingQueue {
         return queue.size();
     }
 
-    
+    /**
+     * Attempts to add a task to the queue without blocking.
+     * 
+     * @param task The task to add.
+     * @return true if the task was added, false if the queue is full.
+     */
     public synchronized boolean offer(CustomRunnable task) {
         if (queue.size() >= capacity) {
             return false;
@@ -71,7 +76,6 @@ public class BlockingQueue {
         notifyAll();
         return true;
     }
-
 
     
 }
