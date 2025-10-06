@@ -19,8 +19,25 @@ public class WorkerThread extends Thread {
         this.taskQueue = taskQueue;
     }
 
+    /**
+     * The main execution loop of the worker thread.
+     * Continuously dequeues tasks from the shared TaskQueue and executes them.
+     * If the queue is empty, the thread will block until a task becomes available.
+     */
     @Override
-    public void run() { }
+    public void run() { 
+        try {
+            while (running) {
+                // Blocks if the queue is empty
+                Runnable task = taskQueue.dequeue();
+                // Execute the task
+                task.run();
+            }
+        } catch (InterruptedException e) {
+            // Thread was interrupted, exit gracefully
+            Thread.currentThread().interrupt();
+        }
+    }
 
     public void shutdown() { }
     
