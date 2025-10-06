@@ -50,8 +50,25 @@ public class TaskQueue {
         notifyAll();
     }
 
+    /**
+     * Dequeue a task from the queue.
+     * If the queue is empty, this method blocks until a task becomes available.
+     * 
+     * @return The Runnable task removed from the front of the queue.
+     * @throws InterruptedException If the thread is interrupted while waiting to dequeue.
+     */
+    public synchronized Runnable dequeue() throws InterruptedException {
+        // Wait while the queue is empty
+        while (tasks.isEmpty()) {
+            wait();
+        }
 
-    public synchronized Runnable dequeue() {
+        // Remove the first task from the queue
+        Runnable task = tasks.removeFirst();
+
+        // Notify any threads waiting in enqueue() that space may be available
+        notifyAll();
+        return task;
     }
 
     public synchronized int size() { }
