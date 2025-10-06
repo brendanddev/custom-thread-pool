@@ -29,9 +29,31 @@ public class TaskQueue {
         this.tasks = new LinkedList<>();
     }
 
+    /**
+     * Enqueue a task into the queue.
+     * This method is synchronized to allow only one thread to modify the internal queue at a time.
+     * 
+     * @param task The Runnable task to be added to the queue.
+     * @throws InterruptedException If the thread is interrupted while waiting to enqueue.
+     */
+    public synchronized void enqueue(Runnable task) throws InterruptedException {
+        // Wait if the queue is full
+        while (tasks.size() >= capacity) {
+            wait(); // Releases lock and waits to be notified
+        }
+        
+        // Add task at the end of the queue
+        tasks.addLast(task);
 
-    public synchronized void enqueue() { }
-    public synchronized Runnable dequeue() { }
+        // Notify all waiting threads that a new task is available
+        // Wakes up any worker thread waiiting in dequeue()
+        notifyAll();
+    }
+
+
+    public synchronized Runnable dequeue() {
+    }
+
     public synchronized int size() { }
     
 }
