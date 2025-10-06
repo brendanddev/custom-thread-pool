@@ -7,7 +7,6 @@ import java.util.LinkedList;
  * 
  * All methods are synchronized to ensure that multiple threads can safely enqueue and dequeue tasks 
  * without race conditions.
- * 
  */
 public class TaskQueue {
 
@@ -71,6 +70,11 @@ public class TaskQueue {
         return task;
     }
 
-    public synchronized int size() { }
+    /**
+     * Returns the current number of tasks in the queue.
+     */
+    public synchronized int size() { 
+        return tasks.size();
+    }
     
 }
