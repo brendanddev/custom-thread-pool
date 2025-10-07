@@ -58,6 +58,7 @@ public class WorkerThread implements Runnable {
                     // Task finished (either normally or exceptionally)
                     completedTaskCount.incrementAndGet();
                     workerCount.decrementAndGet();
+                    printStats();
                 }
             }
         } catch (InterruptedException e) {
@@ -71,6 +72,15 @@ public class WorkerThread implements Runnable {
      */
     public void shutdown() { 
         running = false;
+    }
+
+    /**
+     * Prints the current state of the worker thread and internal task queue.
+     */
+    public void printStats() {
+        System.out.println("Queue size: " + taskQueue.size() +
+                        ", Active workers: " + workerCount.get() +
+                        ", Completed tasks: " + completedTaskCount.get());
     }
     
 }
