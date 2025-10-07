@@ -12,6 +12,10 @@ public class CustomThreadPool {
     private final TaskQueue taskQueue;
     private final WorkerThread[] workers;
     private volatile boolean isShutdown = false;
+    private volatile boolean isTerminated = false;
+
+    // Special task to signal workers to terminate
+    private static final Runnable POISON_PILL = () -> {};
 
     /**
      * Constructs a CustomThreadPool with a given number of worker threads.
@@ -51,6 +55,13 @@ public class CustomThreadPool {
         for (WorkerThread worker : workers) {
             worker.shutdown();
         }
+    }
+
+    /**
+     * Checks if the thread pool has been shut down.
+     */
+    public boolean isTerminated() {
+        return isTerminated;
     }
 
     
