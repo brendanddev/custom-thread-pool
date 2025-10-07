@@ -15,5 +15,22 @@ public class RejectionHandlers {
     public static final RejectionHandler ABORT_POLICY = (task, pool) -> {
         throw new RuntimeException("[ABORT] - Task rejected from " + pool);
     };
+
+    /**
+     * A policy that silently (only prints) discards the rejected task.
+     */
+    public static final RejectionHandler DISCARD_POLICY = (task, pool) -> {
+        System.out.println("[DISCARD] - Task discarded from " + pool);
+    };
+
+    /**
+     * A policy that runs the rejected task in the caller's thread.
+     */
+    public static final RejectionHandler CALLER_RUNS_POLICY = (task, pool) -> {
+        System.out.println("[CALLER_RUNS] - Running task in caller thread from " + pool);
+        task.run();
+    };
+
+    
     
 }
