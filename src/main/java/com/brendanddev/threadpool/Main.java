@@ -19,13 +19,14 @@ public class Main {
             try {
                 threadPool.execute(() -> {
                     System.out.println("Task " + taskId + " is running on " + Thread.currentThread().getName());
-                    try {
-                        // Simulate workers doing some work
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                    }
+                    // Simulate workers doing some work
+                    try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
                     System.out.println("Task " + taskId + " completed on " + Thread.currentThread().getName());
+
+                    // Print current state after each task finishes
+                    System.out.println("Queue size: " + threadPool.getQueueSize() +
+                               ", Active workers: " + threadPool.getActiveWorkerCount() +
+                               ", Completed tasks: " + threadPool.getCompletedTaskCount());
                 });
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
@@ -40,6 +41,7 @@ public class Main {
             // Wait up to 5 seconds for all workers to finish
             boolean terminated = threadPool.awaitTermination(5000);
             System.out.println("Thread pool terminated: " + terminated);
+            System.out.println("Final completed tasks: " + threadPool.getCompletedTaskCount());
         } catch (Exception e) {
             e.printStackTrace();
         }
