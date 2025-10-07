@@ -47,15 +47,53 @@ public class CustomThreadPool {
     }
 
     /**
-     * Gracefully shuts down all worker threads.
-     * Allows ongoing tasks to complete before stopping the workers.
+     * Initiates a graceful shutdown of the thread pool.
+     * New tasks are rejected, but existing and queued tasks will finish.
      */
     public void shutdown() { 
         isShutdown = true;
+        for (int i = 0; i < workers.length; i++) {
+            try {
+                // Enqueue a poison pill for each worker to signal termination
+                taskQueue.enqueue(POISON_PILL);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+
+    /**
+     * Attempts to stop all actively executing tasks and returns tasks that were not executed.
+     * This interrupts all worker threads immediately.
+     * 
+     * @return A list of tasks that were submitted but not yet executed.
+     */
+    public List<Runnable> shutdownNow() {
+        isShutdown = true;
+        List<Runnable> remainingTasks = new ArrayList<>();
+
+        // Synchronize on the TaskQueue to safely access its internal state
+        // Ensures no worker thread is dequeuing tasks while we are iterating or removing tasks
+        synchronized (taskQueue) {
+            while (taskQueue.size() > 0) {
+                try {
+                    remainingTasks.add(taskQueue.dequeue());
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }
+
+        // Interrupt all worker threads to stop them immediately
         for (WorkerThread worker : workers) {
             worker.shutdown();
         }
+
+        // Mark pool as terminated
+        isTerminated = true;
+        return remainingTasks;
     }
+    
 
     /**
      * Checks if the thread pool has been shut down.
