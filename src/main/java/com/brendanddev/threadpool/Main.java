@@ -43,4 +43,32 @@ public class Main {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        // Immediate shutdown
+        CustomThreadPool threadPool2 = new CustomThreadPool(3);
+
+        // Submit 5 tasks
+        for (int i = 0; i < 5; i++) {
+            int taskId = i;
+            try {
+                threadPool2.execute(() -> {
+                    System.out.println("[Immediate] Task " + taskId + " running on " + Thread.currentThread().getName());
+                    try {
+                        // Longer work to demo interrupt
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        System.out.println("[Immediate] Task " + taskId + " interrupted!");
+                        Thread.currentThread().interrupt();
+                    }
+                    System.out.println("[Immediate] Task " + taskId + " finished on " + Thread.currentThread().getName());
+                });
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        // Immediate shutdown enqueues poison pills and interrupts workers
+        List<Runnable> remainingTasks = threadPool2.shutdownNow();
+        System.out.println("Immediate shutdown called. Remaining tasks: " + remainingTasks.size());
+    }
 }
