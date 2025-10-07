@@ -122,12 +122,32 @@ public class CustomThreadPool {
         return true;
     }
 
-
     /**
      * Checks if the thread pool has been shut down.
      */
     public boolean isTerminated() {
         return isTerminated;
+    }
+
+    /**
+     * Returns the current number of tasks in the queue.
+     */
+    public int getQueueSize() {
+        return taskQueue.size();
+    }
+
+    /**
+     * Returns the number of active worker threads currently executing tasks.
+     */
+    public int getActiveWorkerCount() {
+        return WorkerThread.workerCount.get();
+    }
+
+    /**
+     * Returns the total number of tasks that have been completed by the pool.
+     */
+    public int getCompletedTaskCount() {
+        return WorkerThread.completedTaskCount.get();
     }
 
     

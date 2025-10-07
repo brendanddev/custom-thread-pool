@@ -1,5 +1,7 @@
 package com.brendanddev.threadpool;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import com.brendanddev.threadpool.CustomThreadPool;
 import com.brendanddev.threadpool.TaskQueue;
 
@@ -16,6 +18,8 @@ public class WorkerThread extends Thread {
     private volatile boolean running = true;
 
     private static final Runnable POISON_PILL = CustomThreadPool.POISON_PILL;
+    public static final AtomicInteger workerCount = new AtomicInteger(0);
+    public static final AtomicInteger completedTaskCount = new AtomicInteger(0);
 
     /**
      * Constructs a WorkerThread with the specified TaskQueue.
@@ -40,9 +44,21 @@ public class WorkerThread extends Thread {
 
                 // If task is the poison pill, exit loop gracefully
                 if (task == POISON_PILL) break;
-                
-                // Execute the task
-                task.run();
+
+                workerCount.incrementAndGet();
+
+                // Execute the task safely
+                try {
+                    task.run();
+                } catch (Exception e) {
+                    // Prevent worker from dying, log the exception
+                    System.err.println("Task threw an exception: " + e.getMessage());
+                    e.printStackTrace();
+                } finally {
+                    // Task finished (either normally or exceptionally)
+                    completedTaskCount.incrementAndGet();
+                    workerCount.decrementAndGet();
+                }
             }
         } catch (InterruptedException e) {
             // Thread was interrupted, exit gracefully
@@ -56,7 +72,6 @@ public class WorkerThread extends Thread {
     public void shutdown() { 
         running = false;
         this.interrupt();   // Wake up if blocked on dequeue
-
     }
     
 }
