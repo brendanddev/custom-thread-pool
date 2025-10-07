@@ -31,6 +31,17 @@ public class RejectionHandlers {
         task.run();
     };
 
-    
+    /**
+     * Discards the oldest queued task to make room for the new task.
+     */
+    public static final RejectionHandler DISCARD_OLDES_POLICY = (task, pool) -> {
+        Runnable oldest = pool.getQueue().poll();
+        if (oldest != null) {
+            System.out.println("[DISCARD_OLDEST] - Discarded oldest task from " + pool);
+        }
+        pool.execute(task);
+    };
+
+
     
 }
