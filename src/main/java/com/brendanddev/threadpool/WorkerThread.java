@@ -1,5 +1,6 @@
 package com.brendanddev.threadpool;
 
+import com.brendanddev.threadpool.CustomThreadPool;
 import com.brendanddev.threadpool.TaskQueue;
 
 /**
@@ -13,6 +14,8 @@ public class WorkerThread extends Thread {
 
     private final TaskQueue taskQueue;
     private volatile boolean running = true;
+
+    private static final Runnable POISON_PILL = CustomThreadPool.POISON_PILL;
 
     /**
      * Constructs a WorkerThread with the specified TaskQueue.
@@ -34,6 +37,10 @@ public class WorkerThread extends Thread {
             while (running) {
                 // Blocks if the queue is empty
                 Runnable task = taskQueue.dequeue();
+
+                // If task is the poison pill, exit loop gracefully
+                if (task == POISON_PILL) break;
+                
                 // Execute the task
                 task.run();
             }

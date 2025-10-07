@@ -15,7 +15,7 @@ public class CustomThreadPool {
     private volatile boolean isTerminated = false;
 
     // Special task to signal workers to terminate
-    private static final Runnable POISON_PILL = () -> {};
+    public static final Runnable POISON_PILL = () -> {};
 
     /**
      * Constructs a CustomThreadPool with a given number of worker threads.
