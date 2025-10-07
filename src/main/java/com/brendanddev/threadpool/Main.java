@@ -1,17 +1,18 @@
 package com.brendanddev.threadpool;
 
-import com.brendanddev.threadpool.CustomThreadPool;
+import java.util.List;
 
 /**
- * Demonstrates the usage of the CustomThreadPool by submitting multiple tasks that run concurrently.
+ * Demonstrates the usage of the CustomThreadPool by submitting multiple tasks and showing 
+ * both graceful and immediate shutdown.
  */
 public class Main {
 
     public static void main(String[] args) {
 
-        // Creates a thread pool with 3 worker threads
+        // Create a thread pool with 3 worker threads
         CustomThreadPool threadPool = new CustomThreadPool(3);
-        
+
         // Submit 10 tasks to the thread pool
         for (int i = 0; i < 10; i++) {
             int taskId = i;
@@ -31,9 +32,15 @@ public class Main {
             }
         }
 
-        // Shutdown the thread pool after all tasks are submitted
+        // Graceful shutdown, enqueues poison pills for each worker
         threadPool.shutdown();
-        System.out.println("All tasks submitted. Thread pool is shutting down.");
-    }
-    
+        System.out.println("All tasks submitted. Thread pool is shutting down gracefully.");
+
+        try {
+            // Wait up to 5 seconds for all workers to finish
+            boolean terminated = threadPool.awaitTermination(5000);
+            System.out.println("Thread pool terminated: " + terminated);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 }
