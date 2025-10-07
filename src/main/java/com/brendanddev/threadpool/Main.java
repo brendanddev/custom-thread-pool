@@ -70,5 +70,10 @@ public class Main {
         // Immediate shutdown enqueues poison pills and interrupts workers
         List<Runnable> remainingTasks = threadPool2.shutdownNow();
         System.out.println("Immediate shutdown called. Remaining tasks: " + remainingTasks.size());
+        
+        // Print tasks that were not executed
+        for (int i = 0; i < remainingTasks.size(); i++) {
+            System.out.println("Unexecuted task at queue index: " + i);
+        }
     }
 }

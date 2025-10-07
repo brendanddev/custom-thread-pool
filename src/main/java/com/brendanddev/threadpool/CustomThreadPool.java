@@ -1,5 +1,8 @@
 package com.brendanddev.threadpool;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A custom implementation of a fixed-size thread pool that manages a group of worker threads to execute
  * submitted tasks concurrently.
