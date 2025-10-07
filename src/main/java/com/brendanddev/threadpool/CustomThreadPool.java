@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.brendanddev.threadpool.CustomThreadFactory;
+import com.brendanddev.threadpool.policies.RejectionHandler;
 
 /**
  * A custom implementation of a fixed-size thread pool that manages a group of worker threads to execute
@@ -21,6 +22,7 @@ public class CustomThreadPool {
     private volatile boolean isTerminated = false;
 
     private final CustomThreadFactory threadFactory;
+    private final RejectionHandler rejectionHandler;
 
     // Special task to signal workers to terminate
     public static final Runnable POISON_PILL = () -> {};
@@ -31,8 +33,9 @@ public class CustomThreadPool {
      * @param numThreads The number of worker threads in the pool.
      * @param factory The CustomThreadFactory to create worker threads.
      */
-    public CustomThreadPool(int numThreads, CustomThreadFactory factory) {
+    public CustomThreadPool(int numThreads, CustomThreadFactory factory, RejectionHandler handler) {
         this.threadFactory = factory;
+        this.rejectionHandler = handler;
         taskQueue = new TaskQueue();
         workers = new WorkerThread[numThreads];
         workerThreads = new Thread[numThreads];
@@ -52,7 +55,7 @@ public class CustomThreadPool {
      * @param numThreads The number of worker threads in the pool.
      */
     public CustomThreadPool(int numThreads) {
-        this(numThreads, new CustomThreadFactory("Worker", false, Thread.NORM_PRIORITY));
+        this(numThreads, new CustomThreadFactory("Worker", false, Thread.NORM_PRIORITY), RejectionHandler.ABORT_POLICY);
     }
 
 
@@ -61,13 +64,18 @@ public class CustomThreadPool {
      * Adds the task to the shared TaskQueue if the pool is active.
      * 
      * @param task The Runnable task to be executed.
-     * @throws InterruptedException If the thread is interrupted while waiting to enqueue.
      */
-    public void execute(Runnable task) throws InterruptedException {
+    public void execute(Runnable task) {
         if (isShutdown) {
-            throw new IllegalStateException("ThreadPool is shutting down; cannot accept new tasks.");
+            rejectionHandler.reject(task, this);
+            return;
         }
-        taskQueue.enqueue(task);
+        try {
+            taskQueue.enqueue(task);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            rejectionHandler.reject(task, this);
+        }
     }
 
     /**
