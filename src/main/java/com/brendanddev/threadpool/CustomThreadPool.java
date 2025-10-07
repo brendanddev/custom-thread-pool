@@ -1,7 +1,12 @@
 package com.brendanddev.threadpool;
 
-
-
+/**
+ * A custom implementation of a fixed-size thread pool that manages a group of worker threads to execute
+ * submitted tasks concurrently.
+ * 
+ * This class coordinates task execution using a shared TaskQueue and a fixed number of WorkerThreads. 
+ * Tasks submitted through the `execute(Runnable)` method are enqueued and processed by available worker threads.
+ */
 public class CustomThreadPool {
 
     private final TaskQueue taskQueue;
@@ -23,7 +28,30 @@ public class CustomThreadPool {
         }
     }
 
-    public void execute() { }
-    public void shutdown() { }
+    /**
+     * Submits a Runnable task for execution.
+     * Adds the task to the shared TaskQueue if the pool is active.
+     * 
+     * @param task The Runnable task to be executed.
+     * @throws InterruptedException If the thread is interrupted while waiting to enqueue.
+     */
+    public void execute(Runnable task) throws InterruptedException {
+        if (isShutdown) {
+            throw new IllegalStateException("ThreadPool is shutting down; cannot accept new tasks.");
+        }
+        taskQueue.enqueue(task);
+    }
+
+    /**
+     * Gracefully shuts down all worker threads.
+     * Allows ongoing tasks to complete before stopping the workers.
+     */
+    public void shutdown() { 
+        isShutdown = true;
+        for (WorkerThread worker : workers) {
+            worker.shutdown();
+        }
+    }
+
     
 }
