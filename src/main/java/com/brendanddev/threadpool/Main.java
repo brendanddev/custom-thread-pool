@@ -8,6 +8,7 @@ import java.util.List;
  */
 public class Main {
 
+    // Run: mvn clean compile exec:java
     public static void main(String[] args) {
 
         // Create a thread pool with 3 worker threads
@@ -22,11 +23,6 @@ public class Main {
                     // Simulate workers doing some work
                     try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
                     System.out.println("Task " + taskId + " completed on " + Thread.currentThread().getName());
-
-                    // Print current state after each task finishes
-                    System.out.println("Queue size: " + threadPool.getQueueSize() +
-                               ", Active workers: " + threadPool.getActiveWorkerCount() +
-                               ", Completed tasks: " + threadPool.getCompletedTaskCount());
                 });
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
