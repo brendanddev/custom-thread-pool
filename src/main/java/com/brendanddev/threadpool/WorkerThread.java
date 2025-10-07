@@ -4,6 +4,10 @@ import com.brendanddev.threadpool.TaskQueue;
 
 /**
  * An implementation of a WorkerThread that repeatedly pulls tasks from the shared TaskQueue and executes them.
+ * 
+ * Forms the core of a custom thread pool implementation. Each worker runs in its own thread, continuously calling
+ * the 'dequeue()' method of the TaskQueue to obtain the next available Runnable task. If no tasks are available,
+ * it blocks until one is enqueued.
  */
 public class WorkerThread extends Thread {
 
@@ -39,6 +43,13 @@ public class WorkerThread extends Thread {
         }
     }
 
-    public void shutdown() { }
+    /**
+     * Stops the worker after completing the current task.
+     */
+    public void shutdown() { 
+        running = false;
+        this.interrupt();   // Wake up if blocked on dequeue
+
+    }
     
 }
