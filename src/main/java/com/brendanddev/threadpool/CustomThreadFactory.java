@@ -32,11 +32,11 @@ public class CustomThreadFactory {
      * 
      * @param r The Runnable task for the new thread to execute.
      */
-    public void newThread(Runnable r) {
+    public Thread newThread(Runnable r) {
         Thread t = new Thread(r, basename + "-" + counter++);
         t.setDaemon(daemon);
         t.setPriority(priority);
-        t.start();
+        return t;
     }
     
 }

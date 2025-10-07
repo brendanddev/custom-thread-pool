@@ -38,7 +38,8 @@ public class CustomThreadPool {
         for (int i = 0; i < numThreads; i++) {
             WorkerThread worker = new WorkerThread(taskQueue);
             workers[i] = worker;
-            threadFactory.newThread(worker);
+            Thread t = threadFactory.newThread(worker);
+            t.start();
         }
     }
 
@@ -50,7 +51,7 @@ public class CustomThreadPool {
     public CustomThreadPool(int numThreads) {
         this(numThreads, new CustomThreadFactory("Worker", false, Thread.NORM_PRIORITY));
     }
-    
+
 
     /**
      * Submits a Runnable task for execution.

@@ -12,7 +12,7 @@ import com.brendanddev.threadpool.TaskQueue;
  * the 'dequeue()' method of the TaskQueue to obtain the next available Runnable task. If no tasks are available,
  * it blocks until one is enqueued.
  */
-public class WorkerThread extends Thread {
+public class WorkerThread implements Runnable {
 
     private final TaskQueue taskQueue;
     private volatile boolean running = true;
