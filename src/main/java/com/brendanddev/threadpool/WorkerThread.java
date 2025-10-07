@@ -71,7 +71,6 @@ public class WorkerThread implements Runnable {
      */
     public void shutdown() { 
         running = false;
-        this.interrupt();   // Wake up if blocked on dequeue
     }
     
 }

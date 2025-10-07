@@ -16,6 +16,7 @@ public class CustomThreadPool {
 
     private final TaskQueue taskQueue;
     private final WorkerThread[] workers;
+    private final Thread[] workerThreads;
     private volatile boolean isShutdown = false;
     private volatile boolean isTerminated = false;
 
@@ -34,11 +35,13 @@ public class CustomThreadPool {
         this.threadFactory = factory;
         taskQueue = new TaskQueue();
         workers = new WorkerThread[numThreads];
+        workerThreads = new Thread[numThreads];
 
         for (int i = 0; i < numThreads; i++) {
             WorkerThread worker = new WorkerThread(taskQueue);
             workers[i] = worker;
             Thread t = threadFactory.newThread(worker);
+            workerThreads[i] = t;
             t.start();
         }
     }
@@ -105,10 +108,14 @@ public class CustomThreadPool {
             }
         }
 
-        // Interrupt all worker threads to stop them immediately
-        for (WorkerThread worker : workers) {
-            worker.shutdown();
+        for (Thread t : workerThreads) {
+            t.interrupt();
         }
+
+        // Interrupt all worker threads to stop them immediately
+        // for (WorkerThread worker : workers) {
+        //     worker.shutdown();
+        // }
 
         // Mark pool as terminated
         isTerminated = true;
@@ -123,21 +130,38 @@ public class CustomThreadPool {
      */
     public boolean awaitTermination(long timeoutMillis) {
         long endTime = System.currentTimeMillis() + timeoutMillis;
-        // Go through each worker and wait for it to finish
-        for (WorkerThread worker : workers) {
-            long remaining = endTime - System.currentTimeMillis();
-            if (remaining <= 0) return false;   // Timed out before all threads finished
 
-            // Wait up to 'remaining' milliseconds for this worker to finish
+        for (Thread t : workerThreads) {
+            long remaining = endTime - System.currentTimeMillis();
+            if (remaining <= 0) return false;   // Timed out before all threads
+
             try {
-                worker.join(remaining);
+                t.join(remaining);
             } catch (InterruptedException e) {
                 // Preserve interrupt status and exit early if interrupted
                 Thread.currentThread().interrupt();
+                return false;
             }
         }
+
         isTerminated = true;
         return true;
+
+
+
+        // Go through each worker and wait for it to finish
+        // for (WorkerThread worker : workers) {
+        //     long remaining = endTime - System.currentTimeMillis();
+        //     if (remaining <= 0) return false;   // Timed out before all threads finished
+
+        //     // Wait up to 'remaining' milliseconds for this worker to finish
+        //     try {
+        //         worker.join(remaining);
+        //     } catch (InterruptedException e) {
+        //         // Preserve interrupt status and exit early if interrupted
+        //         Thread.currentThread().interrupt();
+        //     }
+        // }
     }
 
     /**
