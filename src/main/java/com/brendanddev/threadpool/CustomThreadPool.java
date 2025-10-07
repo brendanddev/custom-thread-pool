@@ -3,6 +3,8 @@ package com.brendanddev.threadpool;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.brendanddev.threadpool.CustomThreadFactory;
+
 /**
  * A custom implementation of a fixed-size thread pool that manages a group of worker threads to execute
  * submitted tasks concurrently.
@@ -17,23 +19,38 @@ public class CustomThreadPool {
     private volatile boolean isShutdown = false;
     private volatile boolean isTerminated = false;
 
+    private final CustomThreadFactory threadFactory;
+
     // Special task to signal workers to terminate
     public static final Runnable POISON_PILL = () -> {};
 
     /**
-     * Constructs a CustomThreadPool with a given number of worker threads.
+     * Constructs a CustomThreadPool with a given number of worker threads and a custom thread factory.
      * 
      * @param numThreads The number of worker threads in the pool.
+     * @param factory The CustomThreadFactory to create worker threads.
      */
-    public CustomThreadPool(int numThreads) {
+    public CustomThreadPool(int numThreads, CustomThreadFactory factory) {
+        this.threadFactory = factory;
         taskQueue = new TaskQueue();
         workers = new WorkerThread[numThreads];
 
         for (int i = 0; i < numThreads; i++) {
-            workers[i] = new WorkerThread(taskQueue);
-            workers[i].start();
+            WorkerThread worker = new WorkerThread(taskQueue);
+            workers[i] = worker;
+            threadFactory.newThread(worker);
         }
     }
+
+    /**
+     * Constructs a CustomThreadPool with a given number of worker threads and a default thread factory.
+     * 
+     * @param numThreads The number of worker threads in the pool.
+     */
+    public CustomThreadPool(int numThreads) {
+        this(numThreads, new CustomThreadFactory("Worker", false, Thread.NORM_PRIORITY));
+    }
+    
 
     /**
      * Submits a Runnable task for execution.
