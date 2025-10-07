@@ -93,7 +93,32 @@ public class CustomThreadPool {
         isTerminated = true;
         return remainingTasks;
     }
-    
+
+    /**
+     * Blocks until all worker threads terminate or the timeout expires.
+     * 
+     * @param timeoutMillis The maximum time to wait in milliseconds.
+     * @return true if all workers terminated, false if the timeout elapsed first.
+     */
+    public boolean awaitTermination(long timeoutMillis) {
+        long endTime = System.currentTimeMillis() + timeoutMillis;
+        // Go through each worker and wait for it to finish
+        for (WorkerThread worker : workers) {
+            long remaining = endTime - System.currentTimeMillis();
+            if (remaining <= 0) return false;   // Timed out before all threads finished
+
+            // Wait up to 'remaining' milliseconds for this worker to finish
+            try {
+                worker.join(remaining);
+            } catch (InterruptedException e) {
+                // Preserve interrupt status and exit early if interrupted
+                Thread.currentThread().interrupt();
+            }
+        }
+        isTerminated = true;
+        return true;
+    }
+
 
     /**
      * Checks if the thread pool has been shut down.
