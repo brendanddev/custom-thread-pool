@@ -1,6 +1,12 @@
 package com.brendanddev.threadpool;
 
-
+/**
+ * A custom implementation of a thread factory that creates threads with specific properties.
+ * This allows for better control over thread naming, daemon status, and priority.
+ * 
+ * The daemon status of threads determines whether the JVM can exit while the threads are running, and
+ * the priority influences the thread scheduling by the JVM.
+ */
 public class CustomThreadFactory {
 
     private final String basename;
@@ -21,6 +27,16 @@ public class CustomThreadFactory {
         this.priority = priority;
     }
 
-    public void newThread() { }
+    /**
+     * Creates a new thread with the specified Runnable task.
+     * 
+     * @param r The Runnable task for the new thread to execute.
+     */
+    public void newThread(Runnable r) {
+        Thread t = new Thread(r, basename + "-" + counter++);
+        t.setDaemon(daemon);
+        t.setPriority(priority);
+        t.start();
+    }
     
 }
