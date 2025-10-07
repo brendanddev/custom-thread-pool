@@ -18,3 +18,5 @@ A custom thread pool implementation in Java, built from scratch to explore and u
 - [Java Concurrency Tutorial](https://docs.oracle.com/javase/tutorial/essential/concurrency/)
 - [Baeldung: Building Thread Pools](https://www.baeldung.com/thread-pool-java-and-guava)
 - [Poison Pill Pattern](https://java-design-patterns.com/patterns/poison-pill/)
+- [Thread Pool Policies](https://medium.com/@ankithahjpgowda/policies-of-threadpoolexecutor-in-java-75f22fd6f637)
+- [ava Thread Pool Execution and Rejection Policies](https://medium.com/@umeshcapg/understanding-java-thread-pool-execution-and-rejection-policies-b97eeb58094a)
