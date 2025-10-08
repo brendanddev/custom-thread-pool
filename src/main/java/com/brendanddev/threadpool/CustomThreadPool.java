@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.brendanddev.threadpool.CustomThreadFactory;
-import com.brendanddev.threadpool.policies.RejectionHandler;
+import com.brendanddev.threadpool.TaskQueue;
+import com.brendanddev.threadpool.policies.RejectionHandlers;
 
 /**
  * A custom implementation of a fixed-size thread pool that manages a group of worker threads to execute
@@ -120,11 +121,6 @@ public class CustomThreadPool {
             t.interrupt();
         }
 
-        // Interrupt all worker threads to stop them immediately
-        // for (WorkerThread worker : workers) {
-        //     worker.shutdown();
-        // }
-
         // Mark pool as terminated
         isTerminated = true;
         return remainingTasks;
@@ -154,22 +150,6 @@ public class CustomThreadPool {
 
         isTerminated = true;
         return true;
-
-
-
-        // Go through each worker and wait for it to finish
-        // for (WorkerThread worker : workers) {
-        //     long remaining = endTime - System.currentTimeMillis();
-        //     if (remaining <= 0) return false;   // Timed out before all threads finished
-
-        //     // Wait up to 'remaining' milliseconds for this worker to finish
-        //     try {
-        //         worker.join(remaining);
-        //     } catch (InterruptedException e) {
-        //         // Preserve interrupt status and exit early if interrupted
-        //         Thread.currentThread().interrupt();
-        //     }
-        // }
     }
 
     /**
@@ -198,6 +178,13 @@ public class CustomThreadPool {
      */
     public int getCompletedTaskCount() {
         return WorkerThread.completedTaskCount.get();
+    }
+
+    /**
+     * Returns the TaskQueue used by the thread pool.
+     */
+    public TaskQueue getTaskQueue() {
+        return taskQueue;
     }
 
     
