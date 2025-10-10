@@ -1,7 +1,7 @@
 package com.brendanddev.threadpool.policies;
 
 import com.brendanddev.threadpool.CustomThreadPool;
-import com.brendanddev.threadpool.RejectionHandler;
+import com.brendanddev.threadpool.policies.RejectionHandler;
 
 /**
  * Provides built-in implementations of common rejection handling policies.
@@ -36,7 +36,7 @@ public class RejectionHandlers {
      * Discards the oldest queued task to make room for the new task.
      */
     public static final RejectionHandler DISCARD_OLDEST_POLICY = (task, pool) -> {
-        Runnable oldest = pool.getQueue().poll();
+        Runnable oldest = pool.getTaskQueue().poll();
         if (oldest != null) {
             System.out.println("[DISCARD_OLDEST] - Discarded oldest task from " + pool);
         }

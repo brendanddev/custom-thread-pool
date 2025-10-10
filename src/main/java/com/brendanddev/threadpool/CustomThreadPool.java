@@ -6,6 +6,7 @@ import java.util.List;
 import com.brendanddev.threadpool.CustomThreadFactory;
 import com.brendanddev.threadpool.TaskQueue;
 import com.brendanddev.threadpool.policies.RejectionHandlers;
+import com.brendanddev.threadpool.policies.RejectionHandler;
 
 /**
  * A custom implementation of a fixed-size thread pool that manages a group of worker threads to execute
@@ -56,7 +57,7 @@ public class CustomThreadPool {
      * @param numThreads The number of worker threads in the pool.
      */
     public CustomThreadPool(int numThreads) {
-        this(numThreads, new CustomThreadFactory("Worker", false, Thread.NORM_PRIORITY), RejectionHandler.ABORT_POLICY);
+        this(numThreads, new CustomThreadFactory("Worker", false, Thread.NORM_PRIORITY), RejectionHandlers.ABORT_POLICY);
     }
 
 

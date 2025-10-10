@@ -98,7 +98,11 @@ public class Main {
         CustomThreadPool abortPool = new CustomThreadPool(numThreads, new CustomThreadFactory("AbortWorker", false, Thread.NORM_PRIORITY), RejectionHandlers.ABORT_POLICY);
         abortPool.shutdown();
         System.out.println("-- ABORT POLICY --");
-        abortPool.execute(testTask);
+        try {
+            abortPool.execute(testTask);
+        } catch (RuntimeException e) {
+            System.out.println("Caught expected exception: " + e.getMessage());
+        }
 
         // Discard policy example
         CustomThreadPool discardPool = new CustomThreadPool(numThreads, new CustomThreadFactory("DiscardWorker", false, Thread.NORM_PRIORITY), RejectionHandlers.DISCARD_POLICY);
