@@ -40,7 +40,12 @@ public class RejectionHandlers {
         if (oldest != null) {
             System.out.println("[DISCARD_OLDEST] - Discarded oldest task from " + pool);
         }
-        pool.execute(task);
+        try {
+            pool.getTaskQueue().enqueue(task);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            System.out.println("[DISCARD_OLDEST] - Interrupted while enqueuing task in " + pool);
+        }
     };
 
 
