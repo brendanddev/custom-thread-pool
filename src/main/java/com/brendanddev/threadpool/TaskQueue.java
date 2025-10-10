@@ -71,6 +71,16 @@ public class TaskQueue {
     }
 
     /**
+     * Non-blocking poll to retrieve and remove the head of the queue, or returns 
+     * null if the queue is empty.
+     * 
+     * @return The Runnable task at the front of the queue, or null if empty.
+     */
+    public synchronized Runnable poll() { 
+        return tasks.isEmpty() ? null : tasks.removeFirst();
+    }
+
+    /**
      * Returns the current number of tasks in the queue.
      */
     public synchronized int size() { 

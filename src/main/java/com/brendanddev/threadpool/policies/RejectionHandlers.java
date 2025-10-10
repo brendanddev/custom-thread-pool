@@ -1,6 +1,7 @@
 package com.brendanddev.threadpool.policies;
 
-import com.brendanddev.threadpool.policies.RejectionHandler;
+import com.brendanddev.threadpool.CustomThreadPool;
+import com.brendanddev.threadpool.RejectionHandler;
 
 /**
  * Provides built-in implementations of common rejection handling policies.
