@@ -10,7 +10,13 @@ A custom thread pool implementation in Java, built from scratch to explore and u
 - **WorkerThread Management** – Multiple worker threads continuously dequeue and execute tasks.  
 - **Graceful Shutdown** – Supports a clean shutdown where queued tasks are completed using the **poison pill pattern**.
 - **Immediate Shutdown** – Can stop all active tasks and return unexecuted tasks immediately.
+- **Rejection Policies** – Handles tasks submitted after shutdown with configurable strategies:
+  - **ABORT_POLICY** – Throws a `RuntimeException`.
+  - **DISCARD_POLICY** – Silently discards the task.
+  - **CALLER_RUNS_POLICY** – Runs the task in the calling thread.
+  - **DISCARD_OLDEST_POLICY** – Removes the oldest queued task to make room for the new task.
 - **Exception Handling** – Worker threads catch exceptions from tasks to prevent thread death.
+- **Custom Thread Factory** – Allows naming threads and configuring priorities.
 
 ---
 
@@ -19,4 +25,4 @@ A custom thread pool implementation in Java, built from scratch to explore and u
 - [Baeldung: Building Thread Pools](https://www.baeldung.com/thread-pool-java-and-guava)
 - [Poison Pill Pattern](https://java-design-patterns.com/patterns/poison-pill/)
 - [Thread Pool Policies](https://medium.com/@ankithahjpgowda/policies-of-threadpoolexecutor-in-java-75f22fd6f637)
-- [ava Thread Pool Execution and Rejection Policies](https://medium.com/@umeshcapg/understanding-java-thread-pool-execution-and-rejection-policies-b97eeb58094a)
+- [Java Thread Pool Execution and Rejection Policies](https://medium.com/@umeshcapg/understanding-java-thread-pool-execution-and-rejection-policies-b97eeb58094a)
