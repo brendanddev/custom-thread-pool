@@ -20,6 +20,34 @@ A custom thread pool implementation in Java, built from scratch to explore and u
 
 ---
 
+## Project Structure
+```
+custom-thread-pool/
+├─ pom.xml
+├─ README.md
+├─ src/
+│ ├─ main/java/com/brendanddev/threadpool/
+│ │ ├─ CustomThreadPool.java
+│ │ ├─ TaskQueue.java
+│ │ ├─ WorkerThread.java
+│ │ ├─ CustomThreadFactory.java
+│ │ ├─ Main.java
+│ │ └─ policies/
+│ │ ├─ RejectionHandler.java
+│ │ └─ RejectionHandlers.java
+├─ target/...
+```
+---
+
+## Usage
+
+1. **Compile and run:**
+```bash
+mvn clean compile exec:java
+```
+
+---
+
 ### References & Inspiration
 - [Java Concurrency Tutorial](https://docs.oracle.com/javase/tutorial/essential/concurrency/)
 - [Baeldung: Building Thread Pools](https://www.baeldung.com/thread-pool-java-and-guava)
